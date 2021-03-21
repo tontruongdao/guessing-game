@@ -1,5 +1,5 @@
 import GlobalStyles from "./styles/GlobalStyles";
-import React, { Component } from 'react';
+import React, { useContext } from 'react';
 import {
   Route,
   BrowserRouter as Router,
@@ -11,6 +11,7 @@ import GameRoom from './pages/GameRoom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import { auth } from './services/firebase';
+import AuthContext, { AuthProvider } from './context/AuthContext'
 
 //  ########## Helper Function ##########
 
@@ -27,79 +28,31 @@ function PrivateRoute({ component: Component, authenticated, ...rest }) {
 
 function PublicRoute({ component: Component, authenticated, ...rest }) {
   return (
-<<<<<<< Updated upstream
-    <>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            dev 2
-          </a>
-        </header>
-      </div>
-      <GlobalStyles />
-    </>
-  );
-=======
     <Route
       {...rest}
       render={(props) => authenticated === false
         ? <Component {...props} />
-        : <Redirect to='/chat' />}
+        : <Redirect to='/gameroom' />}
     />
   )
 }
 
 // #######################################
 
-class App extends Component {
+const App = () => {
 
-  constructor() {
-    super();
-    this.state = {
-      authenticated: false,
-      loading: true,
-    };
-  }
+  const { authenticated } = useContext(AuthContext)
 
-  componentDidMount() {
-    auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({
-          authenticated: true,
-          loading: false,
-        });
-      } else {
-        this.setState({
-          authenticated: false,
-          loading: false,
-        });
-      }
-    })
-  }
-
-  render() {
-    return this.state.loading === true ? <h2>Loading...</h2> : (
+    return (
       <Router>
         <Switch>
           <Route exact path="/" component={Home}></Route>
-          <PrivateRoute path="/chat" authenticated={this.state.authenticated} component={GameRoom}></PrivateRoute>
-          <PublicRoute path="/signup" authenticated={this.state.authenticated} component={Signup}></PublicRoute>
-          <PublicRoute path="/login" authenticated={this.state.authenticated} component={Login}></PublicRoute>
+          <PrivateRoute path="/gameroom" authenticated={authenticated} component={GameRoom}></PrivateRoute>
+          <PublicRoute path="/signup" authenticated={authenticated} component={Signup}></PublicRoute>
+          <PublicRoute path="/login" authenticated={authenticated} component={Login}></PublicRoute>
         </Switch>
       </Router>
     );
-  }
-
->>>>>>> Stashed changes
 }
 
 export default App;
